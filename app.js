@@ -207,76 +207,69 @@ $(document).ready(
             displayGanttChart(ganttChartData);
         }
 
-        function shortestJobFirst(){
+        function shortestJobFirst() {
             var completedList = [];
             var time = 0;
             var queue = [];
             var executionSteps = [];
             var ganttChartData = [];
-
+            
+            // Create a copy of the process list to avoid modifying the original
+            var remainingProcesses = processList.map(p => ({
+                processID: p.processID,
+                arrivalTime: p.arrivalTime,
+                burstTime: p.burstTime,
+                remainingTime: p.burstTime
+            }));
+        
             executionSteps.push('Starting Shortest Job First Scheduling...');
-
-            while (processList.length>0 || queue.length>0) {
-                addToQueueSJF(time);
-                while (queue.length==0) {                
-                    time++;
-                    addToQueueSJF(time);
+        
+            while (remainingProcesses.length > 0 || queue.length > 0) {
+                // Add arriving processes to queue
+                for (var i = 0; i < remainingProcesses.length; i++) {
+                    if (remainingProcesses[i].arrivalTime <= time) {
+                        queue.push(remainingProcesses[i]);
+                        executionSteps.push(`[Time ${time}]: Process P${remainingProcesses[i].processID} added to queue`);
+                        remainingProcesses.splice(i, 1);
+                        i--; // Adjust index after removal
+                    }
                 }
-                processToRun = selectProcessSJF();
+        
+                if (queue.length === 0) {
+                    // No processes ready, increment time
+                    executionSteps.push(`[Time ${time}]: CPU is idle - No processes in queue`);
+                    time++;
+                    continue;
+                }
+        
+                // Sort queue by burst time (shortest first)
+                queue.sort((a, b) => a.burstTime - b.burstTime);
+        
+                // Get the shortest job
+                var currentProcess = queue.shift();
                 
-                executionSteps.push(`[Time ${time}]: CPU is executing P${processToRun.processID} (Remaining Time: ${processToRun.burstTime})`);
+                executionSteps.push(`[Time ${time}]: CPU is executing P${currentProcess.processID} (Burst Time: ${currentProcess.burstTime})`);
                 
                 // Add to Gantt chart
                 ganttChartData.push({
-                    processID: processToRun.processID,
+                    processID: currentProcess.processID,
                     startTime: time,
-                    endTime: time + processToRun.burstTime,
+                    endTime: time + currentProcess.burstTime,
                     isIO: false
                 });
-
-                for (var i = 0; i < processToRun.burstTime; i++) {
-                    time++;
-                    addToQueueSJF(time);
-                }
-                processToRun.processID = processToRun.processID;
-                processToRun.arrivalTime = processToRun.arrivalTime;
-                processToRun.burstTime = processToRun.burstTime;
-                processToRun.completedTime = time;
-                processToRun.turnAroundTime = processToRun.completedTime - processToRun.arrivalTime;
-                processToRun.waitingTime = processToRun.turnAroundTime - processToRun.burstTime;
-                completedList.push(processToRun);
-                executionSteps.push(`[Time ${time}]: Process P${processToRun.processID} Completed Execution`);
+        
+                // Execute the entire process (non-preemptive)
+                time += currentProcess.burstTime;
+                
+                // Calculate metrics
+                currentProcess.completedTime = time;
+                currentProcess.turnAroundTime = currentProcess.completedTime - currentProcess.arrivalTime;
+                currentProcess.waitingTime = currentProcess.turnAroundTime - currentProcess.burstTime;
+                completedList.push(currentProcess);
+                
+                executionSteps.push(`[Time ${time}]: Process P${currentProcess.processID} Completed Execution`);
             }
-
-            function addToQueueSJF(time) {
-                for(var i = 0; i < processList.length; i++) {
-                    if(processList[i].arrivalTime === time) {
-                        var process = {
-                            processID: processList[i].processID, 
-                            arrivalTime: processList[i].arrivalTime, 
-                            burstTime: processList[i].burstTime
-                        }
-                        processList.splice(i, 1);
-                        queue.push(process);
-                        executionSteps.push(`[Time ${time}]: Process P${process.processID} added to queue`);
-                    }
-                }
-            }
-
-            function selectProcessSJF() {
-                if (queue.length!=0) {
-                    queue.sort(function(a, b){
-                        if (a.burstTime > b.burstTime) {
-                            return 1;
-                        } else {
-                            return -1;
-                        }
-                    });
-                }
-                var process = queue.shift();
-                return process;
-            }
-
+        
             // Display results
             displayResults(completedList);
             displayExecutionSteps(executionSteps);
