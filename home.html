@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPU Scheduling Simulator - Welcome</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
+            padding: 1rem 2rem;
+        }
+
+        .navbar-text {
+            color: white !important;
+            font-size: 1.4rem;
+            font-weight: 500;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 4rem 0;
+            margin-bottom: 3rem;
+            border-radius: 0 0 2rem 2rem;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .launch-btn {
+            background-color: #00d2ff;
+            border: none;
+            padding: 1rem 2.5rem;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
+        }
+
+        .launch-btn:hover {
+            transform: translateY(-3px);
+            background-color: #00b8e6;
+        }
+
+        .algorithm-card {
+            border: none;
+            border-radius: 1rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 2rem;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .algorithm-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .card-title {
+            color: #1e3c72;
+            font-weight: 600;
+        }
+
+        .algorithm-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #1e3c72;
+        }
+
+        .how-to-use {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .how-to-use ol li {
+            padding: 0.5rem 0;
+            color: #444;
+        }
+
+        .section-title {
+            color: #1e3c72;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, #1e3c72, #00d2ff);
+        }
+
+        footer {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
+            color: white;
+            padding: 1.5rem 0 !important;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            color: #1e3c72;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <span class="navbar-text">
+                <i class="fas fa-microchip mr-2"></i>
+                CPU Scheduling Simulator
+            </span>
+        </nav>
+    </header>
+
+    <div class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="display-4 mb-4">CPU Scheduling Simulator</h1>
+                <p class="lead mb-4">Experience the power of different CPU scheduling algorithms through our interactive simulator. Perfect for learning and understanding operating system concepts.</p>
+                <a class="btn btn-primary btn-lg launch-btn" href="index.html" role="button">
+                    <i class="fas fa-play-circle mr-2"></i>Launch Simulator
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Features Section -->
+        <div class="row mb-5">
+            <div class="col-md-4">
+                <div class="feature-item">
+                    <i class="fas fa-tachometer-alt feature-icon"></i>
+                    <h4>Real-time Simulation</h4>
+                    <p>Watch processes execute in real-time with detailed visualization</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-item">
+                    <i class="fas fa-chart-bar feature-icon"></i>
+                    <h4>Visual Analytics</h4>
+                    <p>Comprehensive Gantt charts and performance metrics</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-item">
+                    <i class="fas fa-code feature-icon"></i>
+                    <h4>Interactive Learning</h4>
+                    <p>Learn by doing with our hands-on approach</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Algorithms Section -->
+        <h2 class="section-title">Available Scheduling Algorithms</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card algorithm-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-sort-numeric-down algorithm-icon"></i>
+                        <h5 class="card-title">First Come First Served (FCFS)</h5>
+                        <p class="card-text">Simple and fair scheduling based on arrival order. Perfect for understanding basic scheduling concepts.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card algorithm-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-clock algorithm-icon"></i>
+                        <h5 class="card-title">Shortest Job First (SJF)</h5>
+                        <p class="card-text">Optimizes average waiting time by prioritizing shorter processes. Ideal for batch processing systems.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card algorithm-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-hourglass-half algorithm-icon"></i>
+                        <h5 class="card-title">Shortest Remaining Time First</h5>
+                        <p class="card-text">Preemptive version of SJF that dynamically adjusts to new shorter processes.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card algorithm-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-sync algorithm-icon"></i>
+                        <h5 class="card-title">Round Robin (RR)</h5>
+                        <p class="card-text">Fair time-sharing algorithm that allocates each process a time quantum. Excellent for time-sharing systems.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card algorithm-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-exchange-alt algorithm-icon"></i>
+                        <h5 class="card-title">I/O Request Scheduling</h5>
+                        <p class="card-text">Handles I/O-bound and CPU-bound processes efficiently with intelligent resource allocation.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- How to Use Section -->
+        <h2 class="section-title mt-5">How to Use the Simulator</h2>
+        <div class="how-to-use mb-5">
+            <div class="row">
+                <div class="col-12">
+                    <ol>
+                        <li><strong>Add Processes:</strong> Enter Process ID, Arrival Time, and Burst Time for each process you want to simulate</li>
+                        <li><strong>Choose Algorithm:</strong> Select your preferred scheduling algorithm from the available options</li>
+                        <li><strong>Set Parameters:</strong> Configure additional parameters like Time Quantum for Round Robin scheduling</li>
+                        <li><strong>Run Simulation:</strong> Click Calculate to start the simulation and observe the results</li>
+                        <li><strong>Analyze Results:</strong> Study the Gantt chart and performance metrics to understand the scheduling behavior</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center">
+        <div class="container">
+            <p class="mb-0">© CPU Scheduling Simulator | OS Mini Project</p>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+</body>
+</html> 
