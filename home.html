@@ -4,102 +4,132 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CPU Scheduling Simulator - Welcome</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
+        :root {
+            --black: #121212;
+            --blue: #40C4FF;
+            --green: #00E676;
+            --purple: #AB47BC;
+            --text: #E0E0E0;
+            --text-secondary: #80DEEA;
+            --card-bg: rgba(30, 30, 30, 0.9);
+            --border: #424242;
+        }
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f8f9fa;
+            background: var(--black);
+            font-family: 'Roboto Mono', monospace;
+            color: var(--text);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
         }
-
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(180deg, var(--black) 0%, rgba(64, 196, 255, 0.15) 100%);
+        }
+        .binary-flow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text x="10" y="20" font-size="10" fill="%2300E676" opacity="0.15">0101</text><text x="50" y="40" font-size="10" fill="%2300E676" opacity="0.15">1010</text><text x="20" y="60" font-size="10" fill="%2300E676" opacity="0.15">0011</text><text x="60" y="80" font-size="10" fill="%2300E676" opacity="0.15">1100</text></svg>') repeat-y;
+            animation: flow 20s linear infinite;
+        }
+        @keyframes flow {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 100%; }
+        }
+        .digital-clock {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--blue);
+            text-shadow: 0 0 4px var(--blue);
+            animation: tick 1s step-end infinite;
+        }
+        @keyframes tick {
+            50% { opacity: 0.8; }
+        }
         .navbar {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
-            padding: 1rem 2rem;
+            background: var(--card-bg);
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--blue);
+            box-shadow: 0 2px 4px rgba(64, 196, 255, 0.15);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
         }
-
-        .navbar-text {
-            color: white !important;
-            font-size: 1.4rem;
-            font-weight: 500;
+        .navbar h1 {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text);
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            margin: 0;
         }
-
+        .container-fluid {
+            flex: 1;
+            padding: clamp(4rem, 10vw, 5rem) 1rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
         .hero-section {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
-            padding: 4rem 0;
-            margin-bottom: 3rem;
-            border-radius: 0 0 2rem 2rem;
-        }
-
-        .hero-content {
-            text-align: center;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .launch-btn {
-            background-color: #00d2ff;
-            border: none;
-            padding: 1rem 2.5rem;
-            font-size: 1.2rem;
-            border-radius: 50px;
-            transition: transform 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
-        }
-
-        .launch-btn:hover {
-            transform: translateY(-3px);
-            background-color: #00b8e6;
-        }
-
-        .algorithm-card {
-            border: none;
-            border-radius: 1rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            margin-bottom: 2rem;
-            background: white;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .algorithm-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-
-        .card-title {
-            color: #1e3c72;
-            font-weight: 600;
-        }
-
-        .algorithm-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: #1e3c72;
-        }
-
-        .how-to-use {
-            background: white;
-            border-radius: 1rem;
+            background: var(--card-bg);
             padding: 2rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .how-to-use ol li {
-            padding: 0.5rem 0;
-            color: #444;
-        }
-
-        .section-title {
-            color: #1e3c72;
-            font-weight: 600;
+            border-radius: 0.4rem;
+            box-shadow: 0 0 12px rgba(64, 196, 255, 0.2);
+            max-width: 800px;
+            width: 100%;
             margin-bottom: 2rem;
+            border: 1px solid var(--purple);
             text-align: center;
-            position: relative;
-            padding-bottom: 1rem;
         }
-
+        .hero-section h1 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(2rem, 5vw, 3rem);
+            color: var(--text);
+            text-shadow: 0 0 8px var(--green);
+        }
+        .hero-section p {
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+        .launch-btn {
+            background: var(--blue);
+            border: none;
+            border-radius: 0.2rem;
+            padding: 0.75rem 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            box-shadow: 0 0 4px rgba(64, 196, 255, 0.4);
+            color: #FFFFFF;
+            transition: all 0.2s ease;
+        }
+        .launch-btn:hover {
+            background: var(--green);
+            box-shadow: 0 0 8px rgba(0, 230, 118, 0.4);
+            transform: scale(1.03);
+        }
+        .section-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem;
+            color: var(--text);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
         .section-title::after {
             content: '';
             position: absolute;
@@ -108,82 +138,120 @@
             transform: translateX(-50%);
             width: 100px;
             height: 3px;
-            background: linear-gradient(90deg, #1e3c72, #00d2ff);
+            background: var(--blue);
         }
-
-        footer {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
-            color: white;
-            padding: 1.5rem 0 !important;
+        .algorithm-card {
+            background: var(--card-bg);
+            border-radius: 0.4rem;
+            box-shadow: 0 0 8px rgba(0, 230, 118, 0.15);
+            padding: 1.25rem;
+            border: 1px solid var(--green);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-bottom: 1.5rem;
         }
-
-        .feature-item {
-            text-align: center;
+        .algorithm-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 12px rgba(0, 230, 118, 0.3);
+        }
+        .algorithm-icon {
+            font-size: 2rem;
+            color: var(--blue);
+            margin-bottom: 1rem;
+        }
+        .card-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+            color: var(--text);
+        }
+        .card-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .how-to-use {
+            background: var(--card-bg);
+            border-radius: 0.4rem;
             padding: 1.5rem;
+            box-shadow: 0 0 12px rgba(64, 196, 255, 0.2);
+            border: 1px solid var(--purple);
             margin-bottom: 2rem;
         }
-
-        .feature-icon {
-            font-size: 2rem;
-            color: #1e3c72;
-            margin-bottom: 1rem;
+        .how-to-use ol li {
+            color: var(--text);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        footer {
+            background: var(--card-bg);
+            color: var(--text);
+            padding: 1rem;
+            text-align: center;
+            border-top: 1px solid var(--blue);
+        }
+        .fade-in {
+            animation: fadeIn 0.6s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+            .navbar h1 {
+                font-size: 1.2rem;
+            }
+            .digital-clock {
+                font-size: 0.75rem;
+                top: 10px;
+                right: 10px;
+            }
+            .container-fluid {
+                padding: 4rem 0.5rem 0.5rem;
+            }
+        }
+        @media (max-width: 576px) {
+            .algorithm-card {
+                padding: 1rem;
+            }
+            .section-title {
+                font-size: 1.2rem;
+            }
+            .card-title {
+                font-size: 1rem;
+            }
+            .card-text, .how-to-use ol li {
+                font-size: 0.8rem;
+            }
         }
     </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar">
-            <span class="navbar-text">
-                <i class="fas fa-microchip mr-2"></i>
-                CPU Scheduling Simulator
-            </span>
-        </nav>
-    </header>
-
-    <div class="hero-section">
-        <div class="container">
-            <div class="hero-content">
-                <h1 class="display-4 mb-4">CPU Scheduling Simulator</h1>
-                <p class="lead mb-4">Experience the power of different CPU scheduling algorithms through our interactive simulator. Perfect for learning and understanding operating system concepts.</p>
-                <a class="btn btn-primary btn-lg launch-btn" href="index.html" role="button">
-                    <i class="fas fa-play-circle mr-2"></i>Launch Simulator
-                </a>
-            </div>
-        </div>
+    <div class="background">
+        <div class="binary-flow"></div>
     </div>
-
-    <div class="container">
-        <!-- Features Section -->
-        <div class="row mb-5">
-            <div class="col-md-4">
-                <div class="feature-item">
-                    <i class="fas fa-tachometer-alt feature-icon"></i>
-                    <h4>Real-time Simulation</h4>
-                    <p>Watch processes execute in real-time with detailed visualization</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="feature-item">
-                    <i class="fas fa-chart-bar feature-icon"></i>
-                    <h4>Visual Analytics</h4>
-                    <p>Comprehensive Gantt charts and performance metrics</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="feature-item">
-                    <i class="fas fa-code feature-icon"></i>
-                    <h4>Interactive Learning</h4>
-                    <p>Learn by doing with our hands-on approach</p>
-                </div>
+    <div class="digital-clock" id="digitalClock"></div>
+    <nav class="navbar">
+        <div class="container d-flex justify-content-between align-items-center">
+            <h1>CPU Scheduling Simulator</h1>
+            <div>
+                <a href="index.html" class="btn btn-outline-secondary"><i class="fas fa-play"></i> Launch Simulator</a>
             </div>
         </div>
+    </nav>
 
-        <!-- Algorithms Section -->
+    <div class="container-fluid">
+        <div class="hero-section fade-in">
+            <h1>CPU Scheduling Simulator</h1>
+            <p>Experience the power of different CPU scheduling algorithms through our interactive simulator. Perfect for learning and understanding operating system concepts.</p>
+            <a class="btn launch-btn" href="index.html"><i class="fas fa-play-circle me-2"></i>Launch Simulator</a>
+        </div>
+
         <h2 class="section-title">Available Scheduling Algorithms</h2>
         <div class="row">
             <div class="col-md-4">
-                <div class="card algorithm-card">
-                    <div class="card-body text-center">
+                <div class="algorithm-card fade-in">
+                    <div class="text-center">
                         <i class="fas fa-sort-numeric-down algorithm-icon"></i>
                         <h5 class="card-title">First Come First Served (FCFS)</h5>
                         <p class="card-text">Simple and fair scheduling based on arrival order. Perfect for understanding basic scheduling concepts.</p>
@@ -191,8 +259,8 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card algorithm-card">
-                    <div class="card-body text-center">
+                <div class="algorithm-card fade-in">
+                    <div class="text-center">
                         <i class="fas fa-clock algorithm-icon"></i>
                         <h5 class="card-title">Shortest Job First (SJF)</h5>
                         <p class="card-text">Optimizes average waiting time by prioritizing shorter processes. Ideal for batch processing systems.</p>
@@ -200,8 +268,8 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card algorithm-card">
-                    <div class="card-body text-center">
+                <div class="algorithm-card fade-in">
+                    <div class="text-center">
                         <i class="fas fa-hourglass-half algorithm-icon"></i>
                         <h5 class="card-title">Shortest Remaining Time First</h5>
                         <p class="card-text">Preemptive version of SJF that dynamically adjusts to new shorter processes.</p>
@@ -209,8 +277,8 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="card algorithm-card">
-                    <div class="card-body text-center">
+                <div class="algorithm-card fade-in">
+                    <div class="text-center">
                         <i class="fas fa-sync algorithm-icon"></i>
                         <h5 class="card-title">Round Robin (RR)</h5>
                         <p class="card-text">Fair time-sharing algorithm that allocates each process a time quantum. Excellent for time-sharing systems.</p>
@@ -218,8 +286,8 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="card algorithm-card">
-                    <div class="card-body text-center">
+                <div class="algorithm-card fade-in">
+                    <div class="text-center">
                         <i class="fas fa-exchange-alt algorithm-icon"></i>
                         <h5 class="card-title">I/O Request Scheduling</h5>
                         <p class="card-text">Handles I/O-bound and CPU-bound processes efficiently with intelligent resource allocation.</p>
@@ -228,31 +296,33 @@
             </div>
         </div>
 
-        <!-- How to Use Section -->
-        <h2 class="section-title mt-5">How to Use the Simulator</h2>
-        <div class="how-to-use mb-5">
-            <div class="row">
-                <div class="col-12">
-                    <ol>
-                        <li><strong>Add Processes:</strong> Enter Process ID, Arrival Time, and Burst Time for each process you want to simulate</li>
-                        <li><strong>Choose Algorithm:</strong> Select your preferred scheduling algorithm from the available options</li>
-                        <li><strong>Set Parameters:</strong> Configure additional parameters like Time Quantum for Round Robin scheduling</li>
-                        <li><strong>Run Simulation:</strong> Click Calculate to start the simulation and observe the results</li>
-                        <li><strong>Analyze Results:</strong> Study the Gantt chart and performance metrics to understand the scheduling behavior</li>
-                    </ol>
-                </div>
-            </div>
+        <h2 class="section-title">How to Use the Simulator</h2>
+        <div class="how-to-use fade-in">
+            <ol>
+                <li><strong>Add Processes:</strong> Enter Arrival Time and Burst Time for each process you want to simulate.</li>
+                <li><strong>Choose Algorithm:</strong> Select your preferred scheduling algorithm from the available options.</li>
+                <li><strong>Set Parameters:</strong> Configure additional parameters like Time Quantum for Round Robin scheduling.</li>
+                <li><strong>Run Simulation:</strong> Click Simulate to start the simulation and observe the results.</li>
+                <li><strong>Analyze Results:</strong> Study the Gantt chart and performance metrics to understand the scheduling behavior.</li>
+            </ol>
         </div>
     </div>
 
-    <footer class="text-center">
-        <div class="container">
-            <p class="mb-0">© CPU Scheduling Simulator | OS Mini Project</p>
-        </div>
+    <footer>
+        <p class="mb-0">© CPU Scheduling Simulator | OS Mini Project</p>
     </footer>
 
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Digital clock
+        function updateClock() {
+            const now = new Date();
+            const time = now.toLocaleTimeString('en-US', { hour12: false });
+            $('#digitalClock').text(`System Uptime: ${time}`);
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
+    </script>
 </body>
-</html> 
+</html>

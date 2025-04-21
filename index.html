@@ -2,303 +2,668 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CPU Scheduling Simulator</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous">
     <style>
+        :root {
+            --black: #121212;
+            --blue: #40C4FF;
+            --green: #00E676;
+            --purple: #AB47BC;
+            --text: #E0E0E0;
+            --text-secondary: #80DEEA;
+            --card-bg: rgba(30, 30, 30, 0.9);
+            --border: #424242;
+        }
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f8f9fa;
-            color: #333;
+            background: var(--black);
+            font-family: 'Roboto Mono', monospace;
+            color: var(--text);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
         }
-
-        .navbar {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
-            padding: 1rem 2rem;
-        }
-
-        .navbar-text {
-            color: white !important;
-            font-size: 1.4rem;
-            font-weight: 500;
-        }
-
-        .back-to-home {
-            color: white;
-            text-decoration: none;
-            position: absolute;
-            right: 2rem;
-        }
-
-        .back-to-home:hover {
-            color: #e0e0e0;
-            text-decoration: none;
-        }
-
-        .card {
-            border: none;
-            border-radius: 1rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-            background: white;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            border: none;
-            padding: 0.5rem 1.5rem;
-            border-radius: 50px;
-            transition: transform 0.3s ease;
-            box-shadow: 0 4px 15px rgba(30, 60, 114, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
-        }
-
-        .form-control {
-            border-radius: 50px;
-            padding: 0.5rem 1.5rem;
-            border: 1px solid #e0e0e0;
-            margin-bottom: 1rem;
-        }
-
-        .form-control:focus {
-            box-shadow: 0 0 0 0.2rem rgba(30, 60, 114, 0.25);
-            border-color: #1e3c72;
-        }
-
-        .table {
-            background: white;
-            border-radius: 0.5rem;
-            overflow: hidden;
-        }
-
-        .table thead th {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
-            border: none;
-            padding: 1rem;
-        }
-
-        .section-title {
-            color: #1e3c72;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            position: relative;
-            padding-bottom: 0.5rem;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
+        .background {
+            position: fixed;
+            top: 0;
             left: 0;
-            width: 100px;
-            height: 3px;
-            background: linear-gradient(90deg, #1e3c72, #2a5298);
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(180deg, var(--black) 0%, rgba(64, 196, 255, 0.15) 100%);
         }
-
-        .execution-steps, .gantt-chart {
-            background: white;
-            border-radius: 1rem;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        .binary-flow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text x="10" y="20" font-size="10" fill="%2300E676" opacity="0.15">0101</text><text x="50" y="40" font-size="10" fill="%2300E676" opacity="0.15">1010</text><text x="20" y="60" font-size="10" fill="%2300E676" opacity="0.15">0011</text><text x="60" y="80" font-size="10" fill="%2300E676" opacity="0.15">1100</text></svg>') repeat-y;
+            animation: flow 20s linear infinite;
         }
-
-        footer {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
-            padding: 1.5rem 0;
-            margin-top: 3rem;
+        @keyframes flow {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 100%; }
         }
-
-        /* Preserve existing styles */
-        .buttonAlgo {
-            border-radius: 15px !important;
-            width: 70px;
+        .digital-clock {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--blue);
+            text-shadow: 0 0 4px var(--blue);
+            animation: tick 1s step-end infinite;
         }
-
-        #timeQuantum {
-            width: 80px;
+        @keyframes tick {
+            50% { opacity: 0.8; }
         }
-
-        /* Additional modern styles */
-        .process-controls {
-            background: #f8f9fa;
-            border-radius: 1rem;
-            padding: 1.5rem;
-            margin-top: 1rem;
+        .welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--black);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            transition: opacity 0.8s ease;
         }
-
-        .stats-card {
-            background: white;
-            border-radius: 1rem;
-            padding: 1.5rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        .welcome-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
         }
-
-        .stats-value {
-            font-size: 1.2rem;
-            font-weight: 500;
-            color: #1e3c72;
+        .welcome-content {
+            text-align: center;
+            color: var(--text);
+            animation: boot 1.5s ease-in-out;
+        }
+        .welcome-content h1 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 8px var(--green);
+        }
+        @keyframes boot {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--blue);
+            border-top: 5px solid var(--green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .navbar {
+            background: var(--card-bg);
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--blue);
+            box-shadow: 0 2px 4px rgba(64, 196, 255, 0.15);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        .navbar h1 {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text);
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            margin: 0;
+        }
+        .navbar .btn i {
+            margin-right: 0.4rem;
+        }
+        .container-fluid {
+            flex: 1;
+            padding: clamp(4rem, 10vw, 5rem) 1rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .form-section {
+            background: var(--card-bg);
+            padding: 1.25rem;
+            border-radius: 0.4rem;
+            box-shadow: 0 0 12px rgba(64, 196, 255, 0.2);
+            max-width: 900px;
+            width: 100%;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--purple);
+        }
+        .output-section {
+            background: var(--card-bg);
+            padding: 1.25rem;
+            border-radius: 0.4rem;
+            box-shadow: 0 0 12px rgba(64, 196, 255, 0.2);
+            max-width: 900px;
+            width: 100%;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--purple);
+        }
+        .form-section .row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 0.75rem;
+        }
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .input-group-text {
+            background: var(--blue);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 0.2rem 0 0 0.2rem;
+        }
+        .form-control, .form-select {
+            border-radius: 0 0.2rem 0.2rem 0;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.9rem;
+            padding: 0.5rem;
+            background-color: var(--black) !important;
+            border-color: var(--border);
+            color: var(--text) !important;
+            transition: all 0.2s ease;
+        }
+        .form-control:focus {
+            background-color: var(--black) !important;
+            color: var(--text) !important;
+            border-color: var(--green);
+            box-shadow: 0 0 0 0.15rem rgba(0, 230, 118, 0.25);
+        }
+        .form-control:-webkit-autofill,
+        .form-control:-webkit-autofill:hover,
+        .form-control:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0 1000px var(--black) inset !important;
+            -webkit-text-fill-color: var(--text) !important;
+        }
+        .form-control::placeholder, .form-select option {
+            color: var(--text-secondary);
+            opacity: 0.6;
+        }
+        .btn-primary {
+            background: var(--blue);
+            border: none;
+            border-radius: 0.2rem;
+            padding: 0.5rem 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            box-shadow: 0 0 4px rgba(64, 196, 255, 0.4);
+            color: #FFFFFF;
+            transition: all 0.2s ease;
+        }
+        .btn-primary:hover {
+            background: var(--green);
+            box-shadow: 0 0 8px rgba(0, 230, 118, 0.4);
+            transform: scale(1.03);
+        }
+        .btn-outline-secondary {
+            border-color: var(--purple);
+            color: var(--purple);
+            border-radius: 0.2rem;
+            font-family: 'JetBrains Mono', monospace;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+        .btn-outline-secondary:hover {
+            background: var(--purple);
+            color: #FFFFFF;
+            box-shadow: 0 0 8px rgba(171, 71, 188, 0.4);
+        }
+        .btn-outline-secondary:disabled {
+            color: var(--text-secondary);
+            border-color: var(--text-secondary);
+            opacity: 0.4;
+        }
+        .nav-tabs {
+            border-bottom: none;
+            gap: 0.4rem;
+            justify-content: center;
+        }
+        .nav-tabs .nav-link {
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            border: none;
+            border-radius: 0.2rem;
+            padding: 0.4rem 0.8rem;
+            transition: all 0.2s ease;
+        }
+        .nav-tabs .nav-link:hover {
+            background: rgba(171, 71, 188, 0.15);
+            color: var(--purple);
+        }
+        .nav-tabs .nav-link.active {
+            background: var(--green);
+            color: #FFFFFF;
+            box-shadow: 0 0 8px rgba(0, 230, 118, 0.4);
+        }
+        .tab-content {
+            padding: 0.75rem;
+            background: var(--card-bg);
+            border-radius: 0.2rem;
+            color: var(--text);
+        }
+        .table {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.85rem;
+            border-radius: 0.2rem;
+            overflow: hidden;
+            color: #FFFFFF;
+            background: var(--card-bg);
+        }
+        .table th {
+            background: var(--blue);
+            color: #FFFFFF;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            border: 1px solid var(--border);
+        }
+        .table td {
+            background: var(--black);
+            color: #FFFFFF;
+            border: 1px solid var(--border);
+        }
+        .table tbody tr:hover {
+            background: rgba(171, 71, 188, 0.15);
+            transition: background 0.2s ease;
+        }
+        .table-bordered, .table-bordered th, .table-bordered td {
+            border: 1px solid var(--border);
+        }
+        .gantt-container {
+            background: var(--card-bg);
+            padding: 0.75rem;
+            border-radius: 0.2rem;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .gantt-container div {
+            background: var(--green);
+            padding: 0.3rem 0.6rem;
+            border-radius: 0.2rem;
+            color: #FFFFFF;
+            flex: 0 0 auto;
+            position: relative;
+            text-align: center;
+            min-width: 40px;
+        }
+        .gantt-container div::after {
+            content: attr(data-time);
+            position: absolute;
+            bottom: -1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            color: var(--purple);
+        }
+        .gantt-container div:hover {
+            background: var(--purple);
+            box-shadow: 0 0 4px rgba(171, 71, 188, 0.4);
+        }
+        .fade-in {
+            animation: fadeIn 0.6s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(30, 30, 30, 0.85);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+        .progress {
+            height: 1.2rem;
+            border-radius: 0.2rem;
+            background: var(--black);
+        }
+        .progress-bar {
+            background: linear-gradient(45deg, var(--blue), var(--green));
+        }
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1500;
+            border-radius: 0.2rem;
+            background: var(--card-bg);
+            color: var(--text);
+            box-shadow: 0 0 8px rgba(171, 71, 188, 0.2);
+            border: 1px solid var(--purple);
+        }
+        .toast-header {
+            background: var(--blue);
+            color: #FFFFFF;
+            font-family: 'JetBrains Mono', monospace;
+            border-radius: 0.2rem 0.2rem 0 0;
+        }
+        .modal-content {
+            background: var(--card-bg);
+            color: var(--text);
+            border-radius: 0.4rem;
+            box-shadow: 0 0 12px rgba(64, 196, 255, 0.2);
+            border: 1px solid var(--purple);
+        }
+        .modal-header, .modal-footer {
+            background: var(--black);
+            color: var(--text);
+            border: none;
+        }
+        .btn-close {
+            filter: brightness(0.9);
+        }
+        @media (max-width: 768px) {
+            .form-section .row {
+                grid-template-columns: 1fr;
+            }
+            .navbar h1 {
+                font-size: 1.2rem;
+            }
+            .welcome-content h1 {
+                font-size: 2rem;
+            }
+            .digital-clock {
+                font-size: 0.75rem;
+                top: 10px;
+                right: 10px;
+            }
+            .container-fluid {
+                padding: 4rem 0.5rem 0.5rem;
+            }
+        }
+        @media (max-width: 576px) {
+            .form-section, .output-section {
+                padding: 1rem;
+            }
+            .nav-tabs .nav-link {
+                font-size: 0.8rem;
+                padding: 0.3rem 0.6rem;
+            }
+            .table {
+                font-size: 0.8rem;
+            }
+            .button-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            .btn {
+                width: 100%;
+                max-width: 200px;
+            }
         }
     </style>
-    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <nav class="navbar">
-            <span class="navbar-text">
-                <i class="fas fa-microchip mr-2"></i>
-                CPU Scheduling Simulator
-            </span>
-            <a href="home.html" class="back-to-home">
-                <i class="fas fa-home mr-2"></i>
-                Back to Home
-            </a>
-        </nav>
-    </header>
+    <div class="background">
+        <div class="binary-flow"></div>
+    </div>
+    <div class="digital-clock" id="digitalClock"></div>
+    <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-content">
+            <h1>CPU Scheduling Simulator</h1>
+            <div class="spinner"></div>
+        </div>
+    </div>
+    <nav class="navbar">
+        <div class="container d-flex justify-content-between align-items-center">
+            <h1>CPU Scheduling Simulator</h1>
+            <div>
+                <button class="btn btn-outline-secondary me-2" data-bs-toggle="modal" data-bs-target="#helpModal"><i class="fas fa-question-circle"></i>Help</button>
+                <a href="home.html" class="btn btn-outline-secondary"><i class="fas fa-home"></i>Home</a>
+            </div>
+        </div>
+    </nav>
 
-    <div class="container mt-4">
-        <!-- Process Input Section -->
-        <div class="row">
-            <div class="col-md-9">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="section-title">Process List</h4>
-                        <table class="table" id="tblProcessList">
-                    <thead>
-                        <tr>
-                                    <th>Process ID</th>
-                                    <th>Arrival Time</th>
-                                    <th>Burst Time</th>
-                        </tr>
-                    </thead>
-                            <tbody></tbody>
-                </table>
-                        <div class="process-controls">
-                <div class="row">
-                                <div class="col-md-3">
-                                    <input type="number" class="form-control" id="processID" placeholder="Process ID" min="0" required>
-                                </div>
-                                <div class="col-md-3">
-                                    <input type="number" class="form-control" id="arrivalTime" placeholder="Arrival Time" min="0">
-                                </div>
-                                <div class="col-md-3">
-                                    <input type="number" class="form-control" id="burstTime" placeholder="Burst Time" min="0">
-                                </div>
-                                <div class="col-md-3">
-                                    <button class="btn btn-primary w-100" id="btnAddProcess">
-                                        <i class="fas fa-plus mr-2"></i>Add Process
-                                    </button>
-                    </div>
-                    </div>
-                    </div>
+    <div class="container-fluid">
+        <div class="form-section fade-in">
+            <form id="schedulingForm" class="row g-3">
+                <div class="col">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-clock"></i></span>
+                        <input type="text" class="form-control" id="arrivalTime" placeholder="Arrival (e.g., 0 1 2)" required data-bs-toggle="tooltip" title="Space-separated arrival times">
                     </div>
                 </div>
+                <div class="col">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-bolt"></i></span>
+                        <input type="text" class="form-control" id="burstTime" placeholder="Burst (e.g., 2 3 4)" required data-bs-toggle="tooltip" title="Space-separated burst times">
+                    </div>
+                </div>
+                <div class="col">
+                    <select class="form-select" id="algorithm" required>
+                        <option value="">Select Algorithm</option>
+                        <option value="FCFS">FCFS</option>
+                        <option value="SJF">SJF</option>
+                        <option value="SRTF">SRTF</option>
+                        <option value="RR">Round Robin</option>
+                        <option value="IO">I/O Scheduling</option>
+                    </select>
+                </div>
+                <div class="col d-none" id="timeQuantumGroup">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-hourglass"></i></span>
+                        <input type="number" class="form-control" id="timeQuantum" min="1" placeholder="Quantum (e.g., 2)" data-bs-toggle="tooltip" title="Time quantum for Round Robin">
+                    </div>
+                </div>
+                <div class="col d-none" id="ioRequestGroup">
+                    <div class="input-group mb-2">
+                        <span class="input-group-text"><i class="fas fa-hourglass-start"></i></span>
+                        <input type="text" class="form-control" id="ioArrivalTime" placeholder="I/O Arrival (e.g., 1 2)" data-bs-toggle="tooltip" title="Space-separated I/O arrival times">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-hourglass-end"></i></span>
+                        <input type="text" class="form-control" id="ioBurstTime" placeholder="I/O Burst (e.g., 3 4)" data-bs-toggle="tooltip" title="Space-separated I/O burst times">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="button-group">
+                        <button type="button" class="btn btn-outline-secondary" id="sampleInput"><i class="fas fa-code"></i> Sample</button>
+                        <button type="button" class="btn btn-outline-secondary" id="clearForm"><i class="fas fa-trash"></i> Clear</button>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-play"></i> Simulate</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="output-section fade-in">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#processList">Input</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#results">Output</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#executionSteps">Simulation</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#ganttChart">Gantt Chart</a>
+                    </li>
+                </ul>
+                <button class="btn btn-outline-secondary btn-sm" id="exportResults" disabled><i class="fas fa-download"></i> Export</button>
             </div>
-
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="section-title">Algorithm</h4>
-                    <div class="form-group">
-                        <select class="form-control" id="algorithmSelector">
-                            <option value="optFCFS">First Come First Served</option>
-                            <option value="optSJF">Shortest Job First</option>
-                            <option value="optSRTF">Shortest Remaining Time First</option>
-                            <option value="optRR">Round Robin</option>
-                            <option value="optIO">I/O Request Scheduling</option>
-                        </select>
-                    </div>
-                    <div class="form-group form-group-time-quantum">
-                            <label>Time Quantum</label>
-                            <input type="number" class="form-control" id="timeQuantum" min="0" max="9">
-                    </div>
-                    <div class="form-group form-group-io-requests" style="display: none;">
-                            <label>I/O Requests</label>
-                            <div id="ioRequestsContainer"></div>
-                            <button class="btn btn-primary btn-sm mt-2" id="btnAddIO">
-                                <i class="fas fa-plus mr-2"></i>Add I/O Request
-                            </button>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="processList">
+                    <table id="tblProcessList" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>PID</th>
+                                <th>Arrival</th>
+                                <th>Burst</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="tab-pane fade" id="results">
+                    <table id="tblResults" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>PID</th>
+                                <th>Arrival</th>
+                                <th>Burst</th>
+                                <th>Completion</th>
+                                <th>Waiting</th>
+                                <th>Turnaround</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <div class="row mt-3">
+                        <div class="col-md-4">
+                            <label>Avg Turnaround:</label>
+                            <input type="text" id="avgTurnaroundTime" class="form-control" readonly>
                         </div>
-                        <button class="btn btn-primary w-100" id="btnCalculate">
-                            <i class="fas fa-play mr-2"></i>Calculate
-                        </button>
+                        <div class="col-md-4">
+                            <label>Avg Waiting:</label>
+                            <input type="text" id="avgWaitingTime" class="form-control" readonly>
+                        </div>
+                        <div class="col-md-4">
+                            <label>Throughput:</label>
+                            <input type="text" id="throughput" class="form-control" readonly>
+                        </div>
                     </div>
+                </div>
+                <div class="tab-pane fade" id="executionSteps">
+                    <div id="executionSteps"></div>
+                </div>
+                <div class="tab-pane fade" id="ganttChart">
+                    <div id="ganttChart" class="gantt-container"></div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Results Section -->
-        <div class="row">
-            <div class="col-md-9">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="section-title">Results</h4>
-                        <table class="table" id="tblResults">
-                    <thead>
-                        <tr>
-                                    <th>Process ID</th>
-                                    <th>Arrival Time</th>
-                                    <th>Burst Time</th>
-                                    <th>Completed Time</th>
-                                    <th>Waiting Time</th>
-                                    <th>Turnaround Time</th>
-                        </tr>
-                    </thead>
-                            <tbody></tbody>
-                </table>
-                    </div>
-                </div>
+    <div class="loading-overlay">
+        <div class="w-50">
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div>
             </div>
+        </div>
+    </div>
 
-            <div class="col-md-3">
-                <div class="stats-card">
-                    <h4 class="section-title">Statistics</h4>
-                    <div class="form-group">
-                        <label>Average Turnaround Time</label>
-                        <input type="number" class="form-control" id="avgTurnaroundTime" placeholder="0" disabled>
-                    </div>
-                    <div class="form-group">
-                        <label>Average Waiting Time</label>
-                        <input type="number" class="form-control" id="avgWaitingTime" placeholder="0" disabled>
-                    </div>
-                    <div class="form-group">
-                        <label>Throughput</label>
-                        <input type="number" class="form-control" id="throughput" placeholder="0" disabled>
-                    </div>
+    <div class="toast hide" role="alert" data-bs-autohide="true" data-bs-delay="3000">
+        <div class="toast-header">
+            <strong class="me-auto">System Alert</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body"></div>
+    </div>
+
+    <div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="helpModalLabel">Scheduler Help</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6>Quick Start Guide</h6>
+                    <p>Enter space-separated Arrival and Burst times, select an algorithm, and click Simulate. Use Sample for a quick test. Results are shown in tabs, and you can export them as CSV.</p>
+                    <h6>First Come First Serve (FCFS)</h6>
+                    <p>Executes processes in arrival order. Simple but may cause long waiting times.</p>
+                    <h6>Shortest Job First (SJF)</h6>
+                    <p>Non-preemptive, selects the process with the shortest burst time, reducing waiting time.</p>
+                    <h6>Shortest Remaining Time First (SRTF)</h6>
+                    <p>Preemptive SJF, switches to processes with shorter remaining time.</p>
+                    <h6>Round Robin (RR)</h6>
+                    <p>Allocates a fixed time quantum per process in a cyclic order. Requires a time quantum input.</p>
+                    <h6>I/O Scheduling</h6>
+                    <p>Manages processes with I/O requests, blocking them during I/O. Requires I/O arrival and burst times.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">Close</button>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Execution Steps -->
-        <div class="execution-steps">
-            <h4 class="section-title">Step by Step Execution</h4>
-            <div id="executionSteps" style="height: 300px; overflow-y: auto;"></div>
-        </div>
-
-        <!-- Gantt Chart -->
-        <div class="gantt-chart">
-            <h4 class="section-title">Gantt Chart</h4>
-                    <div id="ganttChart"></div>
-                </div>
-            </div>
-
-    <footer class="text-center">
-        <div class="container">
-            <p class="mb-0">© CPU Scheduling Simulator | OS Mini Project</p>
-        </div>
-    </footer>
-
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="app.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Initialize tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.forEach(function(tooltipTriggerEl) {
+                try {
+                    new bootstrap.Tooltip(tooltipTriggerEl);
+                } catch (e) {
+                    console.error('Tooltip initialization failed:', e);
+                }
+            });
+
+            // Welcome screen
+            setTimeout(() => {
+                const welcomeScreen = $('#welcomeScreen');
+                if (welcomeScreen.length) {
+                    welcomeScreen.addClass('hidden');
+                }
+            }, 2000);
+
+            // Digital clock
+            function updateClock() {
+                try {
+                    const now = new Date();
+                    const time = now.toLocaleTimeString('en-US', { hour12: false });
+                    const clock = $('#digitalClock');
+                    if (clock.length) {
+                        clock.text(`System Uptime: ${time}`);
+                    }
+                } catch (e) {
+                    console.error('Clock update failed:', e);
+                }
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
+
+            // Export results as CSV
+            $('#exportResults').on('click', function() {
+                try {
+                    var csv = 'PID,Arrival,Burst,Completion,Waiting,Turnaround\n';
+                    $('#tblResults tbody tr').each(function() {
+                        var row = $(this).find('td').map(function() { return $(this).text(); }).get().join(',');
+                        csv += row + '\n';
+                    });
+                    csv += `,,Avg Turnaround:,$('#avgTurnaroundTime').val(),Avg Waiting:,$('#avgWaitingTime').val(),Throughput:,$('#throughput').val()\n`;
+                    var blob = new Blob([csv], { type: 'text/csv' });
+                    var url = URL.createObjectURL(blob);
+                    var a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'scheduling_results.csv';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                } catch (e) {
+                    console.error('Export failed:', e);
+                }
+            });
+        });
+    </script>
 </body>
 </html>
