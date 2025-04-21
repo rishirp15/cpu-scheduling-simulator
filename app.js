@@ -4,15 +4,16 @@ $(document).ready(function(){
     var queue = [];
 
     // Initially hide conditional fields
-    $("#timeQuantumGroup, #ioRequestGroup").hide().addClass('hidden');
+    $("#timeQuantumGroup, #ioRequestGroup").hide();
 
-    // Show/hide conditional fields with animation
+    // Show/hide conditional fields
     $('#algorithm').on('change', function(){
-        $("#timeQuantumGroup, #ioRequestGroup").slideUp(300).addClass('hidden');
+        console.log('Algorithm changed to:', this.value); // Debugging
+        $("#timeQuantumGroup, #ioRequestGroup").hide();
         if (this.value === 'RR') {
-            $("#timeQuantumGroup").slideDown(300).removeClass('hidden');
+            $("#timeQuantumGroup").show();
         } else if (this.value === 'IO') {
-            $("#ioRequestGroup").slideDown(300).removeClass('hidden');
+            $("#ioRequestGroup").show();
         }
     });
 
@@ -49,7 +50,7 @@ $(document).ready(function(){
         $('#arrivalTime').val('0 1 2').addClass('is-valid').removeClass('is-invalid');
         $('#burstTime').val('5 3 4').addClass('is-valid').removeClass('is-invalid');
         $('#algorithm').val('FCFS');
-        $("#timeQuantumGroup, #ioRequestGroup").slideUp(300).addClass('hidden');
+        $("#timeQuantumGroup, #ioRequestGroup").hide();
     });
 
     // Clear form
@@ -58,7 +59,7 @@ $(document).ready(function(){
         $('#arrivalTime, #burstTime, #timeQuantum, #ioArrivalTime, #ioBurstTime').removeClass('is-valid is-invalid');
         $('#tblProcessList tbody, #tblResults tbody, #executionSteps, #ganttChart').empty();
         $('#avgTurnaroundTime, #avgWaitingTime, #throughput').val('');
-        $("#timeQuantumGroup, #ioRequestGroup").slideUp(300).addClass('hidden');
+        $("#timeQuantumGroup, #ioRequestGroup").hide();
     });
 
     $('#schedulingForm').on('submit', function(e){

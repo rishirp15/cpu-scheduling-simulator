@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -268,7 +267,7 @@
         .table {
             font-family: 'Roboto Mono', monospace;
             font-size: 0.85rem;
-            border-radius: 0.2rem;
+            border-radius: 0   border-radius: 0.2rem;
             overflow: hidden;
             color: #FFFFFF;
             background: var(--card-bg);
@@ -288,7 +287,6 @@
         }
         .table tbody tr:hover {
             background: rgba(171, 71, 188, 0.15);
-            transition: background 0.2s ease;
         }
         .table-bordered, .table-bordered th, .table-bordered td {
             border: 1px solid var(--border);
@@ -436,6 +434,9 @@
                 margin-right: 0.3rem;
             }
         }
+        #timeQuantumGroup, #ioRequestGroup {
+            display: none;
+        }
     </style>
 </head>
 <body data-page="index">
@@ -484,13 +485,13 @@
                         <option value="IO">I/O Scheduling</option>
                     </select>
                 </div>
-                <div class="col d-none" id="timeQuantumGroup">
+                <div class="col" id="timeQuantumGroup">
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-hourglass"></i></span>
                         <input type="number" class="form-control" id="timeQuantum" min="1" placeholder="Quantum (e.g., 2)" data-bs-toggle="tooltip" title="Time quantum for Round Robin">
                     </div>
                 </div>
-                <div class="col d-none" id="ioRequestGroup">
+                <div class="col" id="ioRequestGroup">
                     <div class="input-group mb-2">
                         <span class="input-group-text"><i class="fas fa-hourglass-start"></i></span>
                         <input type="text" class="form-control" id="ioArrivalTime" placeholder="I/O Arrival (e.g., 1 2)" data-bs-toggle="tooltip" title="Space-separated I/O arrival times">
