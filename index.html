@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -124,9 +125,13 @@
         .navbar .btn i {
             margin-right: 0.4rem;
         }
+        .navbar .nav-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
         .container-fluid {
             flex: 1;
-            padding: clamp(4rem, 10vw, 5rem) 1rem 1rem;
+            padding: calc(clamp(4rem, 10vw, 5rem) + 60px) 1rem 1rem;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -140,6 +145,8 @@
             width: 100%;
             margin-bottom: 1.5rem;
             border: 1px solid var(--purple);
+            position: relative;
+            z-index: 10;
         }
         .output-section {
             background: var(--card-bg);
@@ -177,6 +184,7 @@
             border-color: var(--border);
             color: var(--text) !important;
             transition: all 0.2s ease;
+            z-index: 10;
         }
         .form-control:focus {
             background-color: var(--black) !important;
@@ -394,7 +402,7 @@
                 right: 10px;
             }
             .container-fluid {
-                padding: 4rem 0.5rem 0.5rem;
+                padding: calc(5rem + 60px) 0.5rem 0.5rem;
             }
         }
         @media (max-width: 576px) {
@@ -416,10 +424,21 @@
                 width: 100%;
                 max-width: 200px;
             }
+            .navbar .nav-buttons {
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+            .navbar .btn {
+                font-size: 0.8rem;
+                padding: 0.4rem 0.8rem;
+            }
+            .navbar .btn i {
+                margin-right: 0.3rem;
+            }
         }
     </style>
 </head>
-<body>
+<body data-page="index">
     <div class="background">
         <div class="binary-flow"></div>
     </div>
@@ -433,8 +452,8 @@
     <nav class="navbar">
         <div class="container d-flex justify-content-between align-items-center">
             <h1>CPU Scheduling Simulator</h1>
-            <div>
-                <button class="btn btn-outline-secondary me-2" data-bs-toggle="modal" data-bs-target="#helpModal"><i class="fas fa-question-circle"></i>Help</button>
+            <div class="nav-buttons">
+                <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#helpModal"><i class="fas fa-question-circle"></i>Help</button>
                 <a href="home.html" class="btn btn-outline-secondary"><i class="fas fa-home"></i>Home</a>
             </div>
         </div>
