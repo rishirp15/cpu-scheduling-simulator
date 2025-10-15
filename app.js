@@ -142,26 +142,44 @@ $(document).ready(function(){
         $('#tblResults tbody, #executionSteps, #ganttChart').empty();
         $('#exportResults').prop('disabled', true);
 
-        try {
-            if (selectedAlgo === 'FCFS') {
-                firstComeFirstServed();
-            } else if (selectedAlgo === 'SJF') {
-                shortestJobFirst();
-            } else if (selectedAlgo === 'SRTF') {
-                shortestRemainingTimeFirst();
-            } else if (selectedAlgo === 'RR') {
-                roundRobin();
-            } else if (selectedAlgo === 'IO') {
-                ioRequestScheduling();
-            }
-            $('#exportResults').prop('disabled', false);
-            showToast('Simulation completed successfully!', 'success');
-        } catch (error) {
-            console.error('Error in scheduling algorithm:', error);
-            showToast('Error: An error occurred while calculating the schedule. Check the console.', 'danger');
-        } finally {
-            $('.loading-overlay').fadeOut(200);
-        }
+        const functionUrl = "https://calculateschedule-cyg8duazbcgaevgv.centralindia-01.azurewebsites.net/api/HttpTrigger1?code=2a1lB1gefw04QlWZJParjGcuR5c3VGWt2TnjwWytdzKiAzFuA5tI6g==";
+
+        const payload = {
+          processList: processList,
+          selectedAlgo: selectedAlgo,
+          timeQuantum: timeQuantum,
+          ioRequests: ioRequests
+        };
+
+      fetch(functionUrl, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+      })
+      .then(response => {
+          if (!response.ok) {
+              // If the server response is not OK (e.g., 500 error), throw an error
+              throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+      })
+      .then(data => {
+          // 'data' now contains the results from your Azure Function
+          displayResults(data.completedList);
+          displayExecutionSteps(data.executionSteps);
+          displayGanttChart(data.ganttChartData);
+          $('#exportResults').prop('disabled', false);
+          showToast('Simulation completed successfully!', 'success');
+      })
+      .catch(error => {
+          console.error('Error calling Azure Function:', error);
+          showToast('Error: Failed to get schedule from the cloud. Check the console.', 'danger');
+      })
+      .finally(() => {
+          $('.loading-overlay').fadeOut(200);
+      });
     });
 
     // Toast notification function
